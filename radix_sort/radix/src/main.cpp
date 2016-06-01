@@ -18,6 +18,12 @@ void print_array(const vector<int>& a) {
     cout << "]" << endl;
 }
 
+/*!
+ * \brief radix_sort
+ * \param vin input container unsorted
+ * \param vout output container holding sorted list
+ * \return number of passes
+ */
 int radix_sort(const vector<int>& vin, vector<int>& vout) {
 
     //vout
@@ -37,9 +43,11 @@ int radix_sort(const vector<int>& vin, vector<int>& vout) {
 
     int count_zeros = 0;
     int npass = 1;
+    div_t div_result;
 
     //compute all buckets sizes
     while(count_zeros < vin.size()) {
+        fill(vout.begin(), vout.end(), 0);
 
         //reset
         count_zeros = 0;
@@ -56,8 +64,10 @@ int radix_sort(const vector<int>& vin, vector<int>& vout) {
 
             int key = 0;
             for(int i=0; i < npass; i++) {
-                temp = temp / base;
-                key = temp % base;
+                //mod first then divide
+                div_result = div(temp, base);
+                key = div_result.rem;
+                temp = div_result.quot;
             }
 
             //incr
@@ -80,8 +90,10 @@ int radix_sort(const vector<int>& vin, vector<int>& vout) {
 
             int key = 0;
             for(int i=0; i < npass; i++) {
-                temp = temp / base;
-                key = temp % base;
+                //mod first then divide
+                div_result = div(temp, base);
+                key = div_result.rem;
+                temp = div_result.quot;
             }
 
             if(temp == 0)
@@ -124,6 +136,21 @@ int main(int argc, char *argv[])
 
     cout << "output ";
     print_array(vout);
+
+
+    //golden
+    vector<int> golden(vin);
+    sort(golden.begin(), golden.end());
+    //print_array(golden);
+
+    for(int i=0; i < len; i++) {
+        if(golden[i] != vout[i]) {
+            printf("ERROR: Test failed at [%d]\n", i);
+            exit(1);
+        }
+    }
+
+    printf("TEST PASSED!\n");
 
     return 0;
 }
